@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountManagementAPI", "AccountManagementAPI\AccountManagementAPI.csproj", "{F22AF477-65E5-4FAA-8341-C055A98483F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F22AF477-65E5-4FAA-8341-C055A98483F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F22AF477-65E5-4FAA-8341-C055A98483F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F22AF477-65E5-4FAA-8341-C055A98483F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F22AF477-65E5-4FAA-8341-C055A98483F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41783DCC-62C0-4FC9-89DF-53B7FA42177D}
+	EndGlobalSection
+EndGlobal
