@@ -331,7 +331,7 @@ namespace AccountManagementAPI.Services
         //thanh toán lãi
         public bool PayInterest(string account_id, decimal subId, out string message)
         {
-                        account_id = account_id.Trim().ToUpper();
+            account_id = account_id.Trim().ToUpper();
 
             if (!CheckSubAccountExists(account_id, subId, out message))
             {

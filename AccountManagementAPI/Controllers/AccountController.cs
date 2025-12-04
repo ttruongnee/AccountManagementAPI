@@ -6,7 +6,7 @@ using AccountManagementAPI.Utils;
 namespace AccountManagementAPI.Controllers
 {
     [ApiController]
-    [Route("api/accounts")] 
+    [Route("api/[controller]")] 
     public class AccountsController : ControllerBase
     {
         private readonly IAccountService _accountService;
