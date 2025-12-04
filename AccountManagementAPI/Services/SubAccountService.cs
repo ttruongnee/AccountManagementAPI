@@ -93,6 +93,8 @@ namespace AccountManagementAPI.Services
         //tạo tài khoản con
         public bool CreateSubAccount(SubAccount subAccount, out string message)
         {
+            subAccount.Account_Id = subAccount.Account_Id.Trim().ToUpper();
+            subAccount.Type = subAccount.Type.ToUpper();
             try
             {
                 var result = _subAccountRepo.CreateSubAccount(subAccount, out decimal newSubId);

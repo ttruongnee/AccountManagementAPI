@@ -8,10 +8,10 @@ namespace AccountManagementAPI.Models
 {
     public class SubAccount
     {
-        public int? Sub_Id { get; }
-        public string Account_Id { get; }
+        public int? Sub_Id { get; set; }
+        public string Account_Id { get; set; }
         public string Name { get; }
-        public string Type { get; }
+        public string Type { get; set; }
         //public double InterestRate { get; }
         public double InterestRate => Type == "TK" ? 4.7 : 5.1;
 

@@ -9,7 +9,7 @@ namespace AccountManagementAPI.DTOs
         {
             if (value is string type)
             {
-                return type == "ĐT" || type == "TK";
+                return type.ToUpper() == "ĐT" || type.ToUpper() == "TK";
             }
             return false;
         }
