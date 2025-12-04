@@ -5,15 +5,24 @@ using System.Text;
 
 namespace AccountManagementAPI.Utils
 {
-    public static class EncryptHelper
+    public class EncryptHelper
     {
-        private static readonly string key = "your-32-char-secret-key-12345678"; // 32 bytes cho AES-256
+        private readonly string _key;
 
-        public static string Encrypt(string plainText)
+        public EncryptHelper(IConfiguration config)
+        {
+            _key = config["Encryption:Key"];
+
+            if (string.IsNullOrWhiteSpace(_key) || _key.Length != 32)
+                throw new Exception("AES Key phải có 32 ký tự đối với AES-256.");
+        }
+
+
+        public string Encrypt(string plainText)
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.Key = Encoding.UTF8.GetBytes(_key);
                 aes.GenerateIV(); // IV sẽ khác mỗi lần
                 using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
                 using (var ms = new MemoryStream())
@@ -29,12 +38,12 @@ namespace AccountManagementAPI.Utils
             }
         }
 
-        public static string Decrypt(string cipherText)
+        public string Decrypt(string cipherText)
         {
             byte[] bytes = Convert.FromBase64String(cipherText);
             using (Aes aes = Aes.Create())
             {
-                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.Key = Encoding.UTF8.GetBytes(_key);
                 byte[] iv = new byte[16];
                 Array.Copy(bytes, 0, iv, 0, 16); // lấy IV từ đầu file
                 aes.IV = iv;

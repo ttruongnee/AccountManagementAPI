@@ -5,10 +5,12 @@ namespace AccountManagementAPI.Utils
     public class ConfigurationHelper
     {
         private readonly IConfiguration _config;
+        private readonly EncryptHelper _encryptHelper;
 
-        public ConfigurationHelper(IConfiguration config)
+        public ConfigurationHelper(IConfiguration config, EncryptHelper encryptHelper)
         {
             _config = config;
+            _encryptHelper = encryptHelper;
         }
 
         public string GetEncryptedConnectionString()
@@ -19,7 +21,7 @@ namespace AccountManagementAPI.Utils
         public string GetDecryptedConnectionString()
         {
             string encrypted = GetEncryptedConnectionString();
-            return EncryptHelper.Decrypt(encrypted);
+            return _encryptHelper.Decrypt(encrypted);
         }
 
         public string GetConnectionString()

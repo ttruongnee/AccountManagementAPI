@@ -2,9 +2,6 @@
 using AccountManagementAPI.Repositories;
 using AccountManagementAPI.Services;
 using AccountManagementAPI.Utils;
-using AccountManagementAPI.Database;
-using AccountManagementAPI.Repositories;
-using AccountManagementAPI.Services;
 using NLog;
 using NLog.Web;
 
@@ -28,6 +25,8 @@ try
     // ===== Register Database & Utils =====
     builder.Services.AddScoped<IOracleDb, OracleDb>();
     builder.Services.AddSingleton<ConfigurationHelper>();
+    builder.Services.AddSingleton<EncryptHelper>();
+
 
     // ===== Register Repositories (KHÔNG có interface) =====
     builder.Services.AddScoped<AccountRepository>();
