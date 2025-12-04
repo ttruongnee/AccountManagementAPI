@@ -65,9 +65,9 @@ namespace AccountManagementAPI.Repositories
                 string sql = "insert into sub_accounts(name, account_id, balance, type) VALUES (:Name, :Account_Id, :Balance, :Type) returning sub_id into :NewSub_Id";
                 var parameters = new DynamicParameters();
                 parameters.Add("Name", subAccount.Name);
-                parameters.Add("Account_Id", subAccount.Account_Id);
+                parameters.Add("Account_Id", subAccount.Account_Id.Trim().ToUpper());
                 parameters.Add("Balance", subAccount.Balance);
-                parameters.Add("Type", subAccount.Type);
+                parameters.Add("Type", subAccount.Type.Trim().ToUpper());
 
                 // Tham số output để nhận sub_id
                 parameters.Add("NewSub_Id", dbType: DbType.Decimal, direction: ParameterDirection.Output);
