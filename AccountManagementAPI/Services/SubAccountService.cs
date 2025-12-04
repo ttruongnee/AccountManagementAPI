@@ -145,6 +145,8 @@ namespace AccountManagementAPI.Services
         //xoá tài khoản con
         public bool DeleteSubAccount(string account_id, decimal subId, out string message)
         {
+            account_id = account_id.Trim().ToUpper();
+
             if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
@@ -196,6 +198,8 @@ namespace AccountManagementAPI.Services
         //nạp tiền
         public bool Deposit(string account_id, decimal subId, double amount, out string message)
         {
+            account_id = account_id.Trim().ToUpper();
+
             if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
@@ -254,6 +258,8 @@ namespace AccountManagementAPI.Services
         //rút tiền
         public bool Withdraw(string account_id, decimal subId, double amount, out string message)
         {
+            account_id = account_id.Trim().ToUpper();
+
             if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;
@@ -313,6 +319,8 @@ namespace AccountManagementAPI.Services
         //thanh toán lãi
         public bool PayInterest(string account_id, decimal subId, out string message)
         {
+            account_id = account_id.Trim().ToUpper();
+
             if (!CheckSubAccountExists(account_id, subId, out message))
             {
                 return false;

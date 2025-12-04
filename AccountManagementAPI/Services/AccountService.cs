@@ -125,6 +125,8 @@ namespace AccountManagementAPI.Services
         //xoá tài khoản chính khi truyền vào id tài khoản, trả về kiểu bool và message thông báo
         public bool DeleteAccount(string accountId, out string message)
         {
+            accountId = accountId.Trim().ToUpper();
+
             var acc = _accountRepo.GetAccountById(accountId);
             if (acc == null)
             {
