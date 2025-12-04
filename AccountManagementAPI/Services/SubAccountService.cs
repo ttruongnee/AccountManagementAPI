@@ -1,4 +1,5 @@
-﻿using AccountManagementAPI.Models;
+﻿using AccountManagementAPI.Database;
+using AccountManagementAPI.Models;
 using AccountManagementAPI.Repositories;
 using NLog;
 using Oracle.ManagedDataAccess.Client;
@@ -33,13 +34,16 @@ namespace AccountManagementAPI.Services
         private readonly AccountRepository _accountRepo;
         private readonly SubAccountRepository _subAccountRepo;
         private readonly LogEntryRepository _loggerRepo;
+        private readonly IOracleDb _oracleDb;
+
 
         //hàm khởi tạo giao dịch
-        public SubAccountService(AccountRepository accountRepository, SubAccountRepository subAccountRepository, LogEntryRepository logEntryRepository)
+        public SubAccountService(AccountRepository accountRepository, SubAccountRepository subAccountRepository, LogEntryRepository logEntryRepository, IOracleDb oracleDb)
         {
             _accountRepo = accountRepository;
             _subAccountRepo = subAccountRepository;
             _loggerRepo = logEntryRepository;
+            _oracleDb = oracleDb;
         }
 
         //lấy ra toàn bộ subacc
@@ -162,37 +166,45 @@ namespace AccountManagementAPI.Services
                 return false;
             }
 
-            try
+            using (var conn = _oracleDb.GetConnection())
             {
-                var result = _subAccountRepo.DeleteSubAccount(account_id, subId);
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
+                {
 
-                if (!result)
-                {
-                    message = $"Xoá {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thất bại.";
-                    _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
-                    Log(NLog.LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
-                    return false;
-                }
+                    try
+                    {
+                        var result = _subAccountRepo.DeleteSubAccount(account_id, subId, conn, tran);
 
-                message = $"Xoá {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thành công.";
-                _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message));
-                Log(NLog.LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message);
-                return true;
-            }
-            catch (OracleException ex)
-            {
-                if (ex.Number == 2292)
-                {
-                    message = "Không thể xóa: Có bản ghi liên quan (FK).";
+                        if (!result)
+                        {
+                            message = $"Xoá {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thất bại.";
+                            _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
+                            Log(NLog.LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
+                            return false;
+                        }
+
+                        message = $"Xoá {GetSubAccountType(subAccount.Type).ToLower()} - {subAccount.Name.ToUpper()} thành công.";
+                        _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message));
+                        Log(NLog.LogLevel.Info, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, true, message);
+                        return true;
+                    }
+                    catch (OracleException ex)
+                    {
+                        if (ex.Number == 2292)
+                        {
+                            message = "Không thể xóa: Có bản ghi liên quan (FK).";
+                        }
+                        else
+                        {
+                            message = $"Lỗi CSDL {ex.Number}: {ex.Message}";
+                        }
+                        _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
+                        Log(NLog.LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
+                        return false;
+                    }
                 }
-                else
-                {
-                    message = $"Lỗi CSDL {ex.Number}: {ex.Message}";
-                }
-                _loggerRepo.CreateLog(new LogEntry(subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message));
-                Log(NLog.LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, $"Xoá {GetSubAccountType(subAccount.Type).ToLower()}", null, false, message);
-                return false;
-            }
+            }            
         }
 
         //nạp tiền
@@ -319,7 +331,7 @@ namespace AccountManagementAPI.Services
         //thanh toán lãi
         public bool PayInterest(string account_id, decimal subId, out string message)
         {
-            account_id = account_id.Trim().ToUpper();
+                        account_id = account_id.Trim().ToUpper();
 
             if (!CheckSubAccountExists(account_id, subId, out message))
             {

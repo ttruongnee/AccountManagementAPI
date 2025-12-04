@@ -5,6 +5,8 @@ using AccountManagementAPI.Models;
 using System.Linq;
 using System.CodeDom;
 using AccountManagementAPI.Database;
+using Oracle.ManagedDataAccess.Client;
+using System.Data;
 
 namespace AccountManagementAPI.Repositories
 {
@@ -48,14 +50,11 @@ namespace AccountManagementAPI.Repositories
         }
 
 
-        public bool DeleteAccount(string account_id)
+        public bool DeleteAccount(string account_id, IDbConnection conn, IDbTransaction tran)
         {
-            using (var conn = OracleDb.GetConnection())
-            {
-                string sql = "delete from accounts where account_id = :account_id";
-                var affectedRows = conn.Execute(sql, new {account_id});
-                return affectedRows > 0;
-            }
+            string sql = "delete from accounts where account_id = :account_id";
+            var affectedRows = conn.Execute(sql, new {account_id}, transaction: tran);
+            return affectedRows > 0;
         }
     }
 }

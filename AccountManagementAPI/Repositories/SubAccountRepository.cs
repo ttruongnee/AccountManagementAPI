@@ -5,6 +5,7 @@ using AccountManagementAPI.Models;
 using System.Linq;
 using System.Data;
 using AccountManagementAPI.Database;
+using Oracle.ManagedDataAccess.Client;
 
 namespace AccountManagementAPI.Repositories
 {
@@ -89,15 +90,12 @@ namespace AccountManagementAPI.Repositories
         }
 
         
-        public bool DeleteSubAccount(string account_id, decimal subId)
+        public bool DeleteSubAccount(string account_id, decimal subId, IDbConnection conn, IDbTransaction tran)
         {
-            using (var conn = OracleDb.GetConnection())
-            {
-                string sql = "delete from sub_accounts where sub_id = :subId and account_id = :account_id";
-                var result = conn.Execute(sql, new { account_id, subId });
+            string sql = "delete from sub_accounts where sub_id = :subId and account_id = :account_id";
+            var result = conn.Execute(sql, new { account_id, subId }, tran);
 
-                return result > 0;  
-            }
+            return result > 0;  
         }
     }
 }
