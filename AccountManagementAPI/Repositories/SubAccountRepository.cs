@@ -26,7 +26,7 @@ namespace AccountManagementAPI.Repositories
                 var dict = new Dictionary<decimal, SubAccount>();
                 foreach (var sub in allsubs)
                 {
-                    dict.Add(sub.SUB_ID, new SubAccount((int)sub.SUB_ID, sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
+                    dict.Add(int.Parse(sub.SUB_ID), new SubAccount(int.Parse(sub.SUB_ID), sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
                 }
                 return dict;
             }
@@ -41,7 +41,7 @@ namespace AccountManagementAPI.Repositories
                 var dict = new Dictionary<decimal, SubAccount>();
                 foreach (var sub in subs)
                 {
-                    dict.Add(sub.SUB_ID, new SubAccount((int)sub.SUB_ID, sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
+                    dict.Add(int.Parse(sub.SUB_ID), new SubAccount(int.Parse(sub.SUB_ID), sub.ACCOUNT_ID, sub.NAME, sub.TYPE, sub.BALANCE));
                 }
                 return dict;
             }
@@ -113,5 +113,6 @@ namespace AccountManagementAPI.Repositories
 
             return result > 0;  
         }
+
     }
 }
