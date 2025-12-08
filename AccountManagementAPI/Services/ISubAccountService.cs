@@ -1,4 +1,5 @@
-﻿using AccountManagementAPI.Models;
+﻿using AccountManagementAPI.DTOs;
+using AccountManagementAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,10 @@ namespace AccountManagementAPI.Services
         bool PayInterest(string account_id, decimal subId, out string message);
 
         //lấy danh sách tài khoản kèm tổng số dư
-        List<(string accountId, double totalBalance)> GetAccountsWithTotalBalance();
+        List<AccountTotalBalanceDTO> GetAccountsWithTotalBalance();
+
+        //lấy danh sách tài khoản kèm subaccounts
+        List<AccountWithSubAccountsDTO> GetAccountWithSubAccounts();
 
     }
 }

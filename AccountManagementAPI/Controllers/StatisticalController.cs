@@ -17,7 +17,7 @@ namespace AccountManagementAPI.Controllers
             _subAccountService = subAccountService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAccountsWithTotalBalance")]
         public IActionResult GetAccountsWithTotalBalance()
         {
             var result = _subAccountService.GetAccountsWithTotalBalance();
@@ -27,7 +27,21 @@ namespace AccountManagementAPI.Controllers
                 return Ok(new { success = true, total = 0, data = new List<object>() });
             }   
 
-            return Ok(new  { success = true, total = result.Count, data = result.ToList() }
+            return Ok(new  { success = true, total = result.Count, data = result }
+            );
+        }
+
+        [HttpGet("GetAccountWithSubAccounts")]
+        public IActionResult GetAccountWithSubAccounts()
+        {
+            var result = _subAccountService.GetAccountWithSubAccounts();
+            if (result == null || result.Count == 0)
+            {
+                //return NotFound("Hệ thống chưa có tài khoản nào!");
+                return Ok(new { success = true, total = 0, data = new List<object>() });
+            }
+
+            return Ok(new { success = true, total = result.Count, data = result }
             );
         }
     }

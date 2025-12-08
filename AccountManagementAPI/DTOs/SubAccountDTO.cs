@@ -49,4 +49,17 @@ namespace AccountManagementAPI.DTOs
         public int Sub_Id { get; set; }
     }
 
+    public class AccountTotalBalanceDTO
+    {
+        public string AccountId { get; set; }
+        public double TotalBalance { get; set; }
+    }
+
+    public class AccountWithSubAccountsDTO
+    {
+        public string AccountId { get; set; }
+        public List<SubAccountDTO> SubAccounts { get; set; }
+        public double TotalBalance { get; set; }
+    }
+
 }

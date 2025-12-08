@@ -1,15 +1,10 @@
 ﻿using AccountManagementAPI.Database;
+using AccountManagementAPI.DTOs;
 using AccountManagementAPI.Models;
 using AccountManagementAPI.Repositories;
 using AccountManagementAPI.Ultils;
-using NLog;
 using Oracle.ManagedDataAccess.Client;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountManagementAPI.Services
 {
@@ -197,7 +192,7 @@ namespace AccountManagementAPI.Services
                         return false;
                     }
                 }
-            }            
+            }
         }
 
         //nạp tiền
@@ -216,7 +211,7 @@ namespace AccountManagementAPI.Services
             //nạp tiền
             subAccount.Deposit(amount);
             try
-            {            
+            {
                 //cập nhật vào db
                 var result = _subAccountRepo.UpdateSubAccount(subAccount);
                 if (!result)
@@ -239,7 +234,7 @@ namespace AccountManagementAPI.Services
 
                     case 904:
                         message = "Tên cột không hợp lệ.";
-                        break ;
+                        break;
 
                     default:
                         message = $"Lỗi CSDL (Oracle {ex.Number}): {ex.Message}";
@@ -375,27 +370,71 @@ namespace AccountManagementAPI.Services
             }
         }
 
-        public List<(string accountId, double totalBalance)> GetAccountsWithTotalBalance()
+        public List<AccountTotalBalanceDTO> GetAccountsWithTotalBalance()
         {
-           var accounts = _accountRepo.GetAllAccounts();
-            if(accounts == null || accounts.Count == 0)
+            var accounts = _accountRepo.GetAllAccounts();
+            if (accounts == null || accounts.Count == 0)
             {
                 return null;
             }
 
-            var result = new List<(string accountId, double totalBalance)>();
-            foreach (var account in accounts) 
+            var result = new List<AccountTotalBalanceDTO>();
+            foreach (var account in accounts)
             {
                 var subAccounts = _subAccountRepo.GetByAccountId(account.Key);
                 if (subAccounts != null && subAccounts.Count > 0)
                 {
                     double totalBalance = subAccounts.Values.Sum(sa => sa.Balance);
-                    result.Add((account.Key, totalBalance));
+                    AccountTotalBalanceDTO a = new()
+                    {
+                        AccountId = account.Key,
+                        TotalBalance = totalBalance
+                    };
+                    result.Add(a);
                 }
             }
-            result.OrderByDescending(r => r.totalBalance);
+            return result.OrderByDescending(r => r.TotalBalance).ToList();
+        }
 
-            return result;
+        public List<AccountWithSubAccountsDTO> GetAccountWithSubAccounts()
+        {
+            var accounts = _accountRepo.GetAllAccounts();
+            if (accounts == null || accounts.Count == 0)
+            {
+                return null;
+            }
+
+            var result = new List<AccountWithSubAccountsDTO>();
+            foreach (var account in accounts)
+            {
+                var subAccounts = _subAccountRepo.GetByAccountId(account.Key);
+                if (subAccounts != null && subAccounts.Count > 0)
+                {
+                    var subAccountDTOs = subAccounts.Values.Select(sa => new SubAccountDTO
+                    {
+                        Sub_Id = (int?)sa.Sub_Id,
+                        Account_Id = sa.Account_Id,
+                        Name = sa.Name,
+                        Type = sa.Type,
+                        Balance = sa.Balance
+                    }).ToList();
+
+                    AccountWithSubAccountsDTO a = new()
+                    {
+                        AccountId = account.Key,
+                        SubAccounts = subAccountDTOs,
+                        TotalBalance = subAccountDTOs.Sum(x => x.Balance)
+                    };
+                    result.Add(a);
+                }
+            }
+
+            //nếu không tạo thêm cột TotalBalance thì làm theo cách này
+            //return result.OrderByDescending(a => a.SubAccounts.Sum(b => b.Balance)).ToList();
+
+            return result
+                   .OrderByDescending(a => a.TotalBalance)
+                   .ToList();
         }
     }
 }
