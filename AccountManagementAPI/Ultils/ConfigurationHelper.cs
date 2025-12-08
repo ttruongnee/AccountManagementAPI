@@ -24,9 +24,9 @@ namespace AccountManagementAPI.Utils
             return _encryptHelper.Decrypt(encrypted);
         }
 
-        public string GetConnectionString()
-        {
-            return _config.GetConnectionString("Default");
-        }
+        //public string GetConnectionString()
+        //{
+        //    return _config.GetConnectionString("Default");
+        //}
     }
 }
