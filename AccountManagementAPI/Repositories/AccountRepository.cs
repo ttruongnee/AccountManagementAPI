@@ -4,7 +4,6 @@ using AccountManagementAPI.Database;
 using AccountManagementAPI.Models;
 using System.Linq;
 using System.CodeDom;
-using AccountManagementAPI.Database;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
 

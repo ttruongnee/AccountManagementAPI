@@ -7,10 +7,17 @@ namespace AccountManagementAPI.Database
     public class OracleDb : IOracleDb
     {
         private readonly string _connectionString;
+        private static string authconnectionString;      
 
         public OracleDb(ConfigurationHelper config)
         {
-            _connectionString = config.GetDecryptedConnectionString();
+            if (authconnectionString == null)
+            {
+                _connectionString = config.GetConnectionString();
+                authconnectionString = _connectionString;
+                return;
+            }
+            _connectionString = authconnectionString;
         }
 
         public IDbConnection GetConnection()
