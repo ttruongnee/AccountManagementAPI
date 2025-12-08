@@ -1,6 +1,7 @@
 ﻿using AccountManagementAPI.Database;
 using AccountManagementAPI.Repositories;
 using AccountManagementAPI.Services;
+using AccountManagementAPI.Ultils;
 using AccountManagementAPI.Utils;
 
 
@@ -16,12 +17,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IOracleDb, OracleDb>();
 builder.Services.AddSingleton<ConfigurationHelper>();
 builder.Services.AddSingleton<EncryptHelper>();
+builder.Services.AddScoped<LogHelper>();
 
 
 // đăng ký Repositories 
 builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<SubAccountRepository>();
 builder.Services.AddScoped<LogEntryRepository>();
+
 
 // đăng ký Services
 builder.Services.AddScoped<IAccountService, AccountService>();
