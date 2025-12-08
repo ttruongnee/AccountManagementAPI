@@ -15,8 +15,7 @@ namespace AccountManagementAPI.Services
     public class SubAccountService : ISubAccountService
     {
         //dùng Logger của nlog
-        private static readonly Logger logger = LogManager.GetLogger("SubAccountService.Main");
-        //private static readonly Logger logger = LogManager.GetCurrentClassLogger();   //tên logger là tên class
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private void Log(NLog.LogLevel logLevel, string accountId, decimal? subId, string action, double? amount, bool success, string note)
         {
             var logEvent = new LogEventInfo(logLevel, logger.Name, note);
@@ -395,6 +394,29 @@ namespace AccountManagementAPI.Services
                 Log(NLog.LogLevel.Error, subAccount.Account_Id, subAccount.Sub_Id, "Thanh toán lãi", interest, false, message);
                 return false;
             }
+        }
+
+        public List<(string accountId, double totalBalance)> GetAccountsWithTotalBalance()
+        {
+           var accounts = _accountRepo.GetAllAccounts();
+            if(accounts == null || accounts.Count == 0)
+            {
+                return null;
+            }
+
+            var result = new List<(string accountId, double totalBalance)>();
+            foreach (var account in accounts) 
+            {
+                var subAccounts = _subAccountRepo.GetByAccountId(account.Key);
+                if (subAccounts != null && subAccounts.Count > 0)
+                {
+                    double totalBalance = subAccounts.Values.Sum(sa => sa.Balance);
+                    result.Add((account.Key, totalBalance));
+                }
+            }
+            result.OrderByDescending(r => r.totalBalance);
+
+            return result;
         }
     }
 }

@@ -28,6 +28,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ISubAccountService, SubAccountService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

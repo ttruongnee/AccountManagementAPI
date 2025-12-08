@@ -35,5 +35,9 @@ namespace AccountManagementAPI.Services
 
         //trả lãi
         bool PayInterest(string account_id, decimal subId, out string message);
+
+        //lấy danh sách tài khoản kèm tổng số dư
+        List<(string accountId, double totalBalance)> GetAccountsWithTotalBalance();
+
     }
 }
